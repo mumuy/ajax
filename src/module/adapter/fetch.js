@@ -25,12 +25,16 @@ export default async function(config){
         }
     }
     // 超时处理
-    let requestDone = false;
+    const controller = new AbortController();
+    const signal = controller.signal;
     let hander = setTimeout(function() {
-        requestDone = true;
+        controller.abort();
         config.onTimeout();
     }, config.timeout);
-    return fetch(url,param).then(function(response){
+    return fetch(url,{
+        ...param,
+        signal
+    }).then(function(response){
         hander && clearTimeout(hander);
         if(dataType=='json'){
             return response.json();
