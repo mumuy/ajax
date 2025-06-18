@@ -3,8 +3,8 @@ import XMLHttpRequest_adapter from './module/adapter/XMLHttpRequest.js';
 import fetch_adapter from './module/adapter/fetch.js';
 import jsonp_adapter from './module/adapter/jsonp.js';
 
-async function ajax(param){
-    let config = getConfig(param);
+async function ajax(params){
+    let config = Object.assign({},_config,getConfig(params));
     if(config.dataType=='jsonp'){
         return jsonp_adapter(config);
     }else if(typeof XMLHttpRequest != 'undefined'){
@@ -15,6 +15,13 @@ async function ajax(param){
         return Promise.resolve(new Error('fail'));
     }
 }
+
+const _config = {};
+
+// 设置全局参数
+ajax.setConfig = function(params){
+    Object.assign(_config,params);
+};
 
 ajax.get = async function(url,data,dataType='json'){
     return ajax({
