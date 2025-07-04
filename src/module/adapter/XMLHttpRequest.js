@@ -10,7 +10,7 @@ export default async function(config){
             xhr.setRequestHeader(name,config.headers[name]);
         }
         xhr.crossDomain = config.crossDomain;
-        xhr.withCredentials = true;
+        xhr.withCredentials = config.credentials;
         // 发送请求
         if (config.method == 'GET') {
             let patch = {};

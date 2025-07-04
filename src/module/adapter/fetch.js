@@ -2,9 +2,8 @@ import getSearchParams from "../utils/getSearchParams.js";
 
 export default async function(config){
     let url = config.url;
-    let param = {
-        credentials: 'same-origin'
-    };
+    let param = {};
+    param.credentials = config.credentials?'include':'same-origin';
     param.headers = config.headers;
     param.cache = config.cache;
     param.mode = config.crossDomain?'cors':'no-cors';
