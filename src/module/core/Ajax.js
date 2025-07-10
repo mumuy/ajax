@@ -38,17 +38,11 @@ class Ajax {
         // 请求拦截器队列处理
         const requestInterceptorChain = [];
         this.interceptors.request.forEach(function(interceptor) {
-            if(typeof interceptor.runWhen&&runWhen===false){
-                return;
-            }
             requestInterceptorChain.unshift(interceptor.resolved, interceptor.rejected);
         });
         // 响应拦截器队列处理
         const responseInterceptorChain = [];
         this.interceptors.response.forEach(function(interceptor) {
-            if(typeof interceptor.runWhen&&runWhen===false){
-                return;
-            }
             responseInterceptorChain.push(interceptor.resolved, interceptor.rejected);
         });
         // 队列处理

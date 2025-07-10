@@ -6,8 +6,7 @@ class Interceptor {
     add(resolved, rejected) {
         this.handlers.push({
             resolved,
-            rejected,
-            runWhen
+            rejected
         });
         return this.handlers.length - 1;
     }
