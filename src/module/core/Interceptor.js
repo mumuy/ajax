@@ -10,6 +10,11 @@ class Interceptor {
         });
         return this.handlers.length - 1;
     }
+    remove(id){
+        if (this.handlers[id]) {
+            this.handlers[id] = null;
+        }
+    }
     clear() {
         this.handlers = [];
     }

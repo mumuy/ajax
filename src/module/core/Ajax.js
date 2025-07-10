@@ -12,13 +12,6 @@ class Ajax {
             response: new Interceptor()
         };
     }
-    // 拦截器方法添加
-    addRequestInterceptor(...actions){
-        return this.interceptors.request.add(...actions);
-    }
-    addResponseInterceptor(...actions){
-        return this.interceptors.response.add(...actions);
-    }
     // 通用请求方法
     async request(requestConfig,otherConfig){
         const config = {};
