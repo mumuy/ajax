@@ -6,7 +6,7 @@ import jsonp_adapter from '../adapter/jsonp.js';
 export default async function(config){
     // 根据环境支持情况选择适配器
     let result = null;
-    if(config.dataType=='jsonp'){
+    if(config.responseType=='jsonp'){
         result = await jsonp_adapter(config);
     }else if(typeof fetch != 'undefined'){
         result = await fetch_adapter(config);

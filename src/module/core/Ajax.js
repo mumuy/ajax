@@ -27,7 +27,7 @@ class Ajax {
             config.url = config.baseURL + config.url;
         }
         config.method = config.method.toUpperCase();
-        config.dataType = config.dataType.toLowerCase();
+        config.responseType = config.responseType.toLowerCase();
         // 请求拦截器队列处理
         const requestInterceptorChain = [];
         this.interceptors.request.forEach(function(interceptor) {

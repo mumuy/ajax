@@ -38,7 +38,7 @@ export default async function(config){
         signal
     }).then(function(response){
         hander && clearTimeout(hander);
-        if(config.dataType=='json'){
+        if(config.responseType=='json'){
             return response.json();
         }else{
             return response.text();

@@ -7,7 +7,7 @@ export default async function(config){
         let $head = document.getElementsByTagName('head')[0];
         let $script = document.createElement('script');
         $head.appendChild($script);
-        if(config.dataType=='jsonp'){
+        if(config.responseType=='jsonp'){
             globalThis[config.jsonpCallback] = function (json) {
                 $head.removeChild($script);
                 delete globalThis[config.jsonpCallback];
@@ -25,7 +25,7 @@ export default async function(config){
         if(config.cache){
             patch['v'] = '_'+Date.now();
         }
-        if(config.dataType=='jsonp'){
+        if(config.responseType=='jsonp'){
             patch[config.jsonp] = config.jsonpCallback;
         }
         let searchParams = getSearchParams(config.data,patch);

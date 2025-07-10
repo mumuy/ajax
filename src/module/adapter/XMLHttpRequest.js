@@ -51,8 +51,8 @@ export default async function(config){
         xhr.addEventListener('loadend',() => {
             if(!requestDone){
                 if(xhr.status>=200 && xhr.status<300||xhr.status == 304) {
-                    let data = config.dataType == "xml" ? xhr.responseXML : xhr.responseText;
-                    if (config.dataType == "json") {
+                    let data = config.responseType == "xml" ? xhr.responseXML : xhr.responseText;
+                    if (config.responseType == "json") {
                         data =  JSON.parse(data);
                     }
                     resolve(data);
