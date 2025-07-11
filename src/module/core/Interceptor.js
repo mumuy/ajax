@@ -1,5 +1,5 @@
 // 拦截器
-class Interceptor {
+export default class Interceptor {
     constructor() {
         this.handlers = [];
     }
@@ -24,5 +24,3 @@ class Interceptor {
         });
     }
 }
-
-export default Interceptor;

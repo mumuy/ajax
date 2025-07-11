@@ -3,6 +3,7 @@
 import defaultConfig from './config.js';
 import Interceptor from './interceptor.js';
 import doRequest from './doRequest.js';
+import ParseEventStream from './ParseEventStream.js';
 
 class Ajax {
     constructor(instanceConfig = {}){
@@ -50,6 +51,22 @@ class Ajax {
             promise = promise.then(taskChain[i++], taskChain[i++]);
         }
         return promise;
+    }
+    // SSE
+    async createEventSource(url,requestConfig){
+        const config = Object.assign({},this.defaults,requestConfig,{
+            method:'GET',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Accept': 'text/event-stream',
+            },
+            responseType:'text',
+        });
+        const data = await this.request({
+            ...config,
+            url,
+        });
+        return new ParseEventStream(data);
     }
 }
 
