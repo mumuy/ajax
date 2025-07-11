@@ -1,13 +1,13 @@
-import defaultConfig from './module/core/config.js';
+
 import Ajax from './module/core/Ajax.js';
-import allOwnKeysAssign from './module/utils/allOwnKeysAssign.js';
+import {allOwnKeysAssign} from './module/utils/tool.js';
 
 // 实现无new创建实例
-function createInstance(defaultConfig) {
+function createInstance(defaultConfig = {}) {
     const context = new Ajax(defaultConfig);
     const instance = Ajax.prototype.request.bind(context);
     allOwnKeysAssign(instance, Ajax.prototype, context);
-    allOwnKeysAssign(instance, context);
+    // allOwnKeysAssign(instance, context);
 
     instance.create = function(instanceConfig) {
         return createInstance(Object.assign(defaultConfig, instanceConfig));
@@ -15,6 +15,6 @@ function createInstance(defaultConfig) {
     return instance;
 }
 
-const ajax = createInstance(defaultConfig);
+const ajax = createInstance();
 
 export default ajax;

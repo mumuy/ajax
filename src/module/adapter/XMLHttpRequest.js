@@ -1,4 +1,4 @@
-import getSearchParams from "../utils/getSearchParams.js";
+import {toQueryString} from "../utils/formatter.js";
 
 export default async function(config){
     return new Promise(function(resolve, reject){
@@ -18,23 +18,16 @@ export default async function(config){
                 patch['v'] = '_'+Date.now();
             }
             let url = config.url;
-            let searchParams = getSearchParams(config.data,patch);
-            if(searchParams){
-                url += (url.includes('?')?'&':'?')+searchParams;
+            let queryString = toQueryString(config.data,patch);
+            if(queryString){
+                url += (url.includes('?')?'&':'?')+queryString;
             }
             xhr.open(config.method, url, true);
             xhr.send(null);
         }else{
             xhr.open(config.method, config.url, true);
-            let data = config.data;
-            if(config.data instanceof FormData){
-                xhr.setRequestHeader('content-type','multipart/form-data');
-            }else if(typeof config.data=='object'){
-                xhr.setRequestHeader('content-type','application/json');
-                data = JSON.stringify(config.data);
-            }else{
-                xhr.setRequestHeader('content-type','application/x-www-form-urlencoded');
-            }
+            const data = transformRequest(config.data, config.headers, config.dataFormatter);
+            xhr.setRequestHeader('Content-Type', config.headers['Content-Type']);
             xhr.send(data);
         }
         // 超时处理

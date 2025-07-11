@@ -1,12 +1,13 @@
 
 // 拦截器
+import defaultConfig from './config.js';
 import Interceptor from './interceptor.js';
 import doRequest from './doRequest.js';
 
 class Ajax {
-    constructor(instanceConfig){
+    constructor(instanceConfig = {}){
         // 实例默认配置
-        this.defaults = instanceConfig;
+        this.defaults = Object.assign({},defaultConfig,instanceConfig);
         this.interceptors = {
             request: new Interceptor(),
             response: new Interceptor()

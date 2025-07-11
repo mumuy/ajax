@@ -1,5 +1,5 @@
 import globalThis from '../runtime/globalThis.js';
-import getSearchParams from "../utils/getSearchParams.js";
+import {toQueryString} from "../utils/formatter.js";
 
 export default async function(config){
     return new Promise(function(resolve, reject){
@@ -28,9 +28,9 @@ export default async function(config){
         if(config.responseType=='jsonp'){
             patch[config.jsonp] = config.jsonpCallback;
         }
-        let searchParams = getSearchParams(config.data,patch);
-        if(searchParams){
-            config.url += (config.url.includes('?')?'&':'?')+searchParams;
+        let queryString = toQueryString(config.data,patch);
+        if(queryString){
+            config.url += (config.url.includes('?')?'&':'?')+queryString;
         }
         $script.src = config.url;
         // 超时处理

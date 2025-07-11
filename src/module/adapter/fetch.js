@@ -1,47 +1,34 @@
-import getSearchParams from "../utils/getSearchParams.js";
+import transformRequest from "../core/transformRequest.js";
+import {toQueryString} from "../utils/formatter.js";
 
 export default async function(config){
     let url = config.url;
-    let params = {
-        credentials: 'same-origin'
+    const params = {
+        method:config.method,
+        credentials:config.crossDomain?'include':'same-origin',
+        headers:config.headers,
+        cache:config.cache?'default':'no-store',
+        mode:config.crossDomain?'cors':'no-cors'
     };
-    let param = {};
-    param.credentials = config.credentials?'include':'same-origin';
-    params.headers = config.headers;
-    params.cache = config.cache?'default':'no-store';
-    params.mode = config.crossDomain?'cors':'no-cors';
     if(config.method=='GET'){
-        let searchParams = getSearchParams(config.data);
-        if(searchParams){
-            url += (url.includes('?')?'&':'?')+searchParams;
+        let queryString = toQueryString(config.data);
+        if(queryString){
+            url += (url.includes('?')?'&':'?')+queryString;
         }
     }else if(config.method=='POST'){
-        params.body = config.data;
-        if(config.data instanceof FormData){
-            params.headers['Content-Type'] = 'multipart/form-data';
-        }else if(typeof config.data=='object'){
-            params.headers['Content-Type'] = 'application/json';
-            params.body = JSON.stringify(config.data);
-        }else{
-            params.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-        }
+        params.body = transformRequest(config.data, params.headers, config.dataFormatter);
     }
     // 超时处理
-    const controller = new AbortController();
-    const signal = controller.signal;
     let hander = setTimeout(function() {
-        controller.abort();
         config.onTimeout();
     }, config.timeout);
-    return fetch(url,{
-        ...params,
-        signal
-    }).then(function(response){
+    // 发起请求
+    return fetch(url,params).then(function(response){
         hander && clearTimeout(hander);
         if(config.responseType=='json'){
-            return response.json();
+            return response.json?response.json():{};
         }else{
-            return response.text();
+            return response.text?response.text():'';
         }
     });
 }
