@@ -25,7 +25,7 @@ class Ajax {
         }else{
             Object.assign(config,this.defaults,requestConfig);
         }
-        if(config.url.indexOf('http')!==0){
+        if(!config.url.startsWith('http')){
             config.url = config.baseURL + config.url;
         }
         config.method = config.method.toUpperCase();
