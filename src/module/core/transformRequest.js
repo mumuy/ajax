@@ -1,16 +1,18 @@
-import { isFormData, isObject, isArrayBufferView} from '../utils/type.js';
+import { isFormData, isObject, isArrayBufferView, isString} from '../utils/type.js';
 import { toQueryString, toBracketsQueryString } from '../utils/formatter.js';
 
 export default function(data, headers, dataFormatter){
     if(!headers['Content-Type']){
         if(isFormData(data)){
             headers['Content-Type'] = 'multipart/form-data';
-        }else if(isObject(data)){
-            headers['Content-Type'] = 'application/json';
+        }else if(data instanceof URLSearchParams){
+            headers['Content-Type'] = 'application/x-www-form-urlencoded';
         }else if(isArrayBufferView(data)){
             headers['Content-Type'] = 'application/octet-stream';
+        }else if(isObject(data)){
+            headers['Content-Type'] = 'application/json';
         }else{
-            headers['Content-Type'] = 'application/x-www-form-urlencoded';
+            headers['Content-Type'] = 'text/plain';
         }
     }
     if(dataFormatter){

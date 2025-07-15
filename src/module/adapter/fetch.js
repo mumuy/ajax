@@ -25,12 +25,14 @@ export default async function(config){
     // 发起请求
     return fetch(url,params).then(function(response){
         hander && clearTimeout(hander);
-        if(config.responseType=='json'&&response.json){
+        if(config.responseType=='stream'){
+            return response.body;
+        }else if(config.responseType=='json'&&response.json){
             return response.json();
         }else if(config.responseType=='text'&&response.text){
             return response.text();
         }else{
-            return response.data;
+            return response.blob();
         }
     });
 }

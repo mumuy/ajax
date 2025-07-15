@@ -54,19 +54,24 @@ class Ajax {
     }
     // SSE
     async createEventSource(url,requestConfig){
+        const controller = new AbortController()
         const config = Object.assign({},this.defaults,requestConfig,{
             method:'GET',
             headers: {
                 'Cache-Control': 'no-cache',
                 'Accept': 'text/event-stream',
+                'Connection': 'keep-alive',
             },
-            responseType:'text',
+            responseType:'stream',
+            signal:controller.signal
         });
         const data = await this.request({
             ...config,
             url,
         });
-        return new ParseEventStream(data);
+        return new ParseEventStream(data,{
+            controller
+        });
     }
 }
 
