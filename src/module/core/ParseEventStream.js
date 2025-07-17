@@ -14,7 +14,7 @@ export default class ParseEventStream {
         try {
             while (true) {
                 const { done, value } = await reader.read();
-                if (done) {
+                if (done&&_.isClose) {
                     break;
                 }
                 const chunk = decoder.decode(value, { stream: true });
@@ -59,7 +59,7 @@ export default class ParseEventStream {
     // 分发事件到对应的回调
     emit(event) {
         try {
-            if (this.listeners.has(event.type)) {
+            if (this.listeners.has(event.type)&&!this.isClose) {
                 this.listeners.get(event.type).forEach(listener => {
                     listener(event);
                 });

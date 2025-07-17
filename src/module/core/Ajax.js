@@ -58,9 +58,7 @@ class Ajax {
         const config = Object.assign({},this.defaults,requestConfig,{
             method:'GET',
             headers: {
-                'Cache-Control': 'no-cache',
-                'Accept': 'text/event-stream',
-                'Connection': 'keep-alive',
+                'Accept': 'text/event-stream'
             },
             responseType:'stream',
             signal:controller.signal
