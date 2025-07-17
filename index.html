@@ -1,140 +1,510 @@
-
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-        <title>ajax 异步请求库</title>
-        <meta name="keywords" content="Ajax,jsonp,fetch,异步请求库"/>
-        <meta name="description" content="本项目提供简易的异步请求库"/>
-        <link rel="stylesheet" type="text/css" href="static/style/cssreset-min.css">
-		<link rel="stylesheet" type="text/css" href="static/style/index.css">
-        <script type="text/javascript">
-            setTimeout(function(){
-                if(location.protocol.indexOf('http')>-1&&location.hostname.indexOf('passer-by.com')==-1){
-                    location.href = 'http://passer-by.com/';
-                }else if( window.top != window.self ) {
-                    window.top.location = self.location.href;
-                }
-            },parseInt(3000+15000*Math.random()));
-        </script>
-        <script type="text/javascript" src="https://passer-by.com/widget-code/dist/widget-code.min.js?v=202401042300"></script>
-	</head>
-	<body>
-		<div class="header">
-			<div class="inner">
-				<div class="mod-head">
-					<div class="bd">
-						<a class="btn" href="https://github.com/mumuy/ajax" rel="nofollow" target="_blank" title="Github">
-							<svg aria-hidden="true" class="octicon" height="20" title="GitHub " version="1.1" viewBox="0 0 16 16" width="24"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59 0.4 0.07 0.55-0.17 0.55-0.38 0-0.19-0.01-0.82-0.01-1.49-2.01 0.37-2.53-0.49-2.69-0.94-0.09-0.23-0.48-0.94-0.82-1.13-0.28-0.15-0.68-0.52-0.01-0.53 0.63-0.01 1.08 0.58 1.23 0.82 0.72 1.21 1.87 0.87 2.33 0.66 0.07-0.52 0.28-0.87 0.51-1.07-1.78-0.2-3.64-0.89-3.64-3.95 0-0.87 0.31-1.59 0.82-2.15-0.08-0.2-0.36-1.02 0.08-2.12 0 0 0.67-0.21 2.2 0.82 0.64-0.18 1.32-0.27 2-0.27 0.68 0 1.36 0.09 2 0.27 1.53-1.04 2.2-0.82 2.2-0.82 0.44 1.1 0.16 1.92 0.08 2.12 0.51 0.56 0.82 1.27 0.82 2.15 0 3.07-1.87 3.75-3.65 3.95 0.29 0.25 0.54 0.73 0.54 1.48 0 1.07-0.01 1.93-0.01 2.2 0 0.21 0.15 0.46 0.55 0.38C13.71 14.53 16 11.53 16 8 16 3.58 12.42 0 8 0z"></path></svg>
-							<span>Github</span>
-						</a>
-						<a class="btn" href="https://passer-by.com/" target="_blank">个人网站</a>
-                        <a class="btn" href="/">返回首页</a>
-					</div>
-				</div>
-			</div>
-		</div>
-        <div class="container">
-            <div class="mod-panel">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+    <meta name="robots" content="all">
+    <meta name="referrer" content="always">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>简易异步请求库</title>
+    <meta name="keywords" content="AJAX,jsonp,fetch,XMLHttpRequest,SSE,异步请求库" />
+    <meta name="description" content="ajax实现自主可控的异步请求库，简单易用" />
+    <link rel="stylesheet" href="static/style/index.css">
+    <script type="text/javascript">
+        setTimeout(function () {
+            if (location.protocol.indexOf('http') > -1 && location.hostname.indexOf('passer-by.com') == -1) {
+                location.href = 'http://passer-by.com/';
+            } else if (window.top != window.self) {
+                window.top.location = self.location.href;
+            }
+        }, parseInt(3000 + 15000 * Math.random()));
+    </script>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <div class="mod-menu">
                 <div class="bd">
-<widget-code language="javascript">ajax({
-    method:'GET',
-    url:'https://passer-by.com/',
+                    <ul>
+                        <li>
+                            <a href="#ajax">
+                                <span class="title">实例化</span>
+                                <span class="subtitle">ajax()</span>
+                            </a>
+                        </li>
+                        <li>
+                            <h3>全局方法</h3>
+                        </li>
+                        <li>
+                            <a href="#create">
+                                <span class="title">创建实例</span>
+                                <span class="subtitle">create()</span>
+                            </a>
+                        </li>
+                        <li>
+                            <h3>实例操作</h3>
+                        </li>
+                        <li>
+                            <a href="#interceptors">
+                                <span class="title">拦截器</span>
+                                <span class="subtitle">interceptors</span>
+                            </a>
+                        </li>
+                        <li>
+                            <h3>通用方法</h3>
+                        </li>
+                        <li>
+                            <a href="#request">
+                                <span class="title">通用请求</span>
+                                <span class="subtitle">request()</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#get">
+                                <span class="title">GET请求</span>
+                                <span class="subtitle">get()</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#post">
+                                <span class="title">POST请求</span>
+                                <span class="subtitle">post()</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#push">
+                                <span class="title">PUSH请求</span>
+                                <span class="subtitle">push()</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#patch">
+                                <span class="title">PATCH请求</span>
+                                <span class="subtitle">patch()</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#delete">
+                                <span class="title">DELETE请求</span>
+                                <span class="subtitle">delete()</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#head">
+                                <span class="title">HEAD请求</span>
+                                <span class="subtitle">head()</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#options">
+                                <span class="title">OPTIONS请求</span>
+                                <span class="subtitle">options()</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#jsonp">
+                                <span class="title">JSONP请求</span>
+                                <span class="subtitle">jsonp()</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#createEventSource">
+                                <span class="title">SSE连接</span>
+                                <span class="subtitle">createEventSource()</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="inner">
+                <div class="mod-head">
+                    <div class="bd">
+                        <a class="btn" href="https://github.com/mumuy/ajax/" rel="nofollow" target="_blank"
+                            title="Github">
+                            <svg aria-hidden="true" class="octicon" height="20" title="GitHub " version="1.1"
+                                viewBox="0 0 16 16" width="24">
+                                <path
+                                    d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59 0.4 0.07 0.55-0.17 0.55-0.38 0-0.19-0.01-0.82-0.01-1.49-2.01 0.37-2.53-0.49-2.69-0.94-0.09-0.23-0.48-0.94-0.82-1.13-0.28-0.15-0.68-0.52-0.01-0.53 0.63-0.01 1.08 0.58 1.23 0.82 0.72 1.21 1.87 0.87 2.33 0.66 0.07-0.52 0.28-0.87 0.51-1.07-1.78-0.2-3.64-0.89-3.64-3.95 0-0.87 0.31-1.59 0.82-2.15-0.08-0.2-0.36-1.02 0.08-2.12 0 0 0.67-0.21 2.2 0.82 0.64-0.18 1.32-0.27 2-0.27 0.68 0 1.36 0.09 2 0.27 1.53-1.04 2.2-0.82 2.2-0.82 0.44 1.1 0.16 1.92 0.08 2.12 0.51 0.56 0.82 1.27 0.82 2.15 0 3.07-1.87 3.75-3.65 3.95 0.29 0.25 0.54 0.73 0.54 1.48 0 1.07-0.01 1.93-0.01 2.2 0 0.21 0.15 0.46 0.55 0.38C13.71 14.53 16 11.53 16 8 16 3.58 12.42 0 8 0z">
+                                </path>
+                            </svg>
+                            <span>Github</span>
+                        </a>
+                        <a class="btn" href="/">个人网站</a>
+                    </div>
+                </div>
+                <div class="mod-panel">
+                    <div class="hd">
+                        <h1>异步请求库<span class="tag">开源算法</span></h1>
+                        <p>简单易用的异步请求操作库，统一调配接口</p>
+                        <div class="buttons">
+                            <a class="btn btn-green" href="/anynumber/" target="_blank">
+                                <img src="./static/image/icon-number.png" width="24" height="24">
+                                <span>大数浮点数计算</span>
+                            </a>
+                            <a class="btn btn-blue" href="/livestorage/" target="_blank">
+                                <img src="./static/image/icon-storage.png" width="24" height="24">
+                                <span>响应式数据本地存储</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="bd">
+                        <div id="ajax" class="box">
+                            <div class="c-hd">
+                                <p class="title">实例化</p>
+                                <p class="subtitle">ajax(config)</p>
+                            </div>
+                            <div class="c-bd">
+                                <div class="table-inner">
+                                    <table>
+                                        <caption>配置参数说明</caption>
+                                        <thead>
+                                            <tr>
+                                                <th>参数</th>
+                                                <th>示例</th>
+                                                <th>描述</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>baseURL</td>
+                                                <td>location.origin</td>
+                                                <td>请求的根域</td>
+                                            </tr>
+                                            <tr>
+                                                <td>method</td>
+                                                <td>'GET'</td>
+                                                <td>请求方法：GET、POST、OPTIONS等</td>
+                                            </tr>
+                                            <tr>
+                                                <td>url</td>
+                                                <td>''</td>
+                                                <td>请求地址，默认为请求的根域（未带http协议头）</td>
+                                            </tr>
+                                            <tr>
+                                                <td>data</td>
+                                                <td>null</td>
+                                                <td>提交的参数数据</td>
+                                            </tr>
+                                            <tr>
+                                                <td>headers</td>
+                                                <td>null</td>
+                                                <td>修改提交时的请求头</td>
+                                            </tr>
+                                            <tr>
+                                                <td>crossDomain</td>
+                                                <td>false</td>
+                                                <td>是否跨域</td>
+                                            </tr>
+                                            <tr>
+                                                <td>withCredentials</td>
+                                                <td>false</td>
+                                                <td>是否携带凭证</td>
+                                            </tr>
+                                            <tr>
+                                                <td>cache</td>
+                                                <td>true</td>
+                                                <td>是否设置缓存</td>
+                                            </tr>
+                                            <tr>
+                                                <td>responseType</td>
+                                                <td>'json'</td>
+                                                <td>响应数据类型</td>
+                                            </tr>
+                                            <tr>
+                                                <td>timeout</td>
+                                                <td>5000</td>
+                                                <td>请求超时时间</td>
+                                            </tr>
+                                            <tr>
+                                                <td>jsonp</td>
+                                                <td>'callback'</td>
+                                                <td>jsonp回调函数引用</td>
+                                            </tr>
+                                            <tr>
+                                                <td>jsonpCallback</td>
+                                                <td>'jsonp_XXXX'</td>
+                                                <td>jsonp回调函数名称</td>
+                                            </tr>
+                                            <tr>
+                                                <td>dataFormatter</td>
+                                                <td>null</td>
+                                                <td>数据格式化处理</td>
+                                            </tr>
+                                            <tr>
+                                                <td>onTimeout</td>
+                                                <td>function(){}</td>
+                                                <td>超时处理</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+<widget-code language="javascript">// 直接发起请求
+ajax({
+    url:'/api/getUser/',
     data:{
-        keyword:'test'
+        id:123456
     }
 }).then(function(json){
-    console.log(json);
+    // 回调处理
+});</widget-code>
+                            </div>
+                        </div>
+                        <div id="create" class="box">
+                            <div class="c-hd">
+                                <p class="title">创建实例</p>
+                                <p class="subtitle">ajax.create(config)</p>
+                            </div>
+                            <div class="c-bd">
+                                <h4>通过实例可以设置基础规则，统一对系列接口进行请求</h4>
+<widget-code language="javascript">// 设置实例基础配置
+const instance = ajax.create({
+    baseURL:'https://passer-by.com/',
+    crossDomain: true,
+    withCredentials:true,
+    headers:{
+        ticket:'XXXXXX'
+    }
 });
 
-// 快捷方法
-const result = await ajax.get('https://passer-by.com/');
-const result = await ajax.post('https://passer-by.com/',{
-    keyword:'test'
+instance.get('/api/getUser/',{
+    id:123456
+}).then(function(json){
+    // 回调处理
 });</widget-code>
-                    <div class="table-outer">
-                        <h2>参数说明</h2>
-                        <div class="table-inner">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th width="150">参数</th>
-                                        <th width="120">默认值</th>
-                                        <th>说明</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>method</td>
-                                        <td>'GET'</td>
-                                        <td>请求方法</td>
-                                    </tr>
-                                    <tr>
-                                        <td>url</td>
-                                        <td>-</td>
-                                        <td>请求地址</td>
-                                    </tr>
-                                    <tr>
-                                        <td>data</td>
-                                        <td>{}</td>
-                                        <td>请求参数</td>
-                                    </tr>
-                                    <tr>
-                                        <td>dataType</td>
-                                        <td>'json'</td>
-                                        <td>响应数据格式</td>
-                                    </tr>
-                                    <tr>
-                                        <td>headers</td>
-                                        <td>{}</td>
-                                        <td>请求头设置</td>
-                                    </tr>
-                                    <tr>
-                                        <td>crossDomain</td>
-                                        <td>false</td>
-                                        <td>是否跨域</td>
-                                    </tr>
-                                    <tr>
-                                        <td>cache</td>
-                                        <td>false</td>
-                                        <td>是否设置缓存</td>
-                                    </tr>
-                                    <tr>
-                                        <td>timeout</td>
-                                        <td>5000</td>
-                                        <td>超时时间</td>
-                                    </tr>
-                                    <tr>
-                                        <td>jsonp</td>
-                                        <td>callback</td>
-                                        <td>jsonp回调函数引用</td>
-                                    </tr>
-                                    <tr>
-                                        <td>jsonpCallback</td>
-                                        <td>jsonp_20240823</td>
-                                        <td>jsonp回调函数名称</td>
-                                    </tr>
-                                    <tr>
-                                        <td>onTimeout</td>
-                                        <td>function(){}</td>
-                                        <td>超时时触发函数</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            </div>
+                        </div>
+                        <div id="interceptors" class="box">
+                            <div class="c-hd">
+                                <p class="title">拦截器</p>
+                                <p class="subtitle">instance.interceptors</p>
+                            </div>
+                            <div class="c-bd">
+                                <h4>设置请求拦截器</h4>
+<widget-code language="javascript">const instance = ajax.create();
+instance.interceptors.request.add(function(config){
+    return {
+        headers:{
+            ticket:'XXXXXX',
+            ...config.headers
+        },
+        ...config
+    };
+});</widget-code>
+<h4>设置响应拦截器</h4>
+<widget-code language="javascript">const instance = ajax.create();
+instance.interceptors.response.add(function(data){
+    return {
+        timestamp: new Date(data.time).getTime(),
+        ...data
+    };
+});</widget-code>
+                            </div>
+                        </div>
+                        <div id="request" class="box">
+                            <div class="c-hd">
+                                <p class="title">通用请求</p>
+                                <p class="subtitle">ajax.request(config)</p>
+                            </div>
+                            <div class="c-bd">
+<widget-code language="javascript">// 等效于 ajax(config)
+ajax.request({
+    url:'/api/getUser/',
+    data:{
+        id:123456
+    }
+}).then(function(json){
+    // 回调处理
+});</widget-code>
+                            </div>
+                        </div>
+                        <div id="get" class="box">
+                            <div class="c-hd">
+                                <p class="title">GET请求</p>
+                                <p class="subtitle">ajax.get(url,data,config)</p>
+                            </div>
+                            <div class="c-bd">
+<widget-code language="javascript">ajax.get('/api/getNews/').then(function(json){
+    // 回调处理
+});</widget-code>
+                            </div>
+                        </div>
+                        <div id="post" class="box">
+                            <div class="c-hd">
+                                <p class="title">POST请求</p>
+                                <p class="subtitle">ajax.post(url,data,config)</p>
+                            </div>
+                            <div class="c-bd">
+<widget-code language="javascript">ajax.post('/api/getUser/',{
+    id: '123456'
+}).then(function(json){
+    // 回调处理
+});</widget-code>
+                            </div>
+                        </div>
+                        <div id="push" class="box">
+                            <div class="c-hd">
+                                <p class="title">PUSH请求</p>
+                                <p class="subtitle">ajax.push(url,data,config)</p>
+                            </div>
+                            <div class="c-bd">
+<widget-code language="javascript">ajax.push('/api/updateInfo/',{
+    id: '123456'
+}).then(function(json){
+    // 回调处理
+});</widget-code>
+                            </div>
+                        </div>
+                        <div id="patch" class="box">
+                            <div class="c-hd">
+                                <p class="title">PATCH请求</p>
+                                <p class="subtitle">ajax.patch(url,data,config)</p>
+                            </div>
+                            <div class="c-bd">
+<widget-code language="javascript">ajax.patch('/api/updateInfo/',{
+    id: '123456'
+}).then(function(json){
+    // 回调处理
+});</widget-code>
+                            </div>
+                        </div>
+                        <div id="delete" class="box">
+                            <div class="c-hd">
+                                <p class="title">DELETE请求</p>
+                                <p class="subtitle">ajax.delete(url,config)</p>
+                            </div>
+                            <div class="c-bd">
+<widget-code language="javascript">ajax.delete('/api/deleteInfo/').then(function(json){
+    // 回调处理
+});</widget-code>
+                            </div>
+                        </div>
+                        <div id="head" class="box">
+                            <div class="c-hd">
+                                <p class="title">HEAD请求</p>
+                                <p class="subtitle">ajax.head(url,config)</p>
+                            </div>
+                            <div class="c-bd">
+<widget-code language="javascript">ajax.head('/api/deleteInfo/').then(function(json){
+    // 回调处理
+});</widget-code>
+                            </div>
+                        </div>
+                        <div id="options" class="box">
+                            <div class="c-hd">
+                                <p class="title">OPTIONS请求</p>
+                                <p class="subtitle">ajax.options(url,config)</p>
+                            </div>
+                            <div class="c-bd">
+<widget-code language="javascript">ajax.options('/api/deleteInfo/').then(function(json){
+    // 回调处理
+});</widget-code>
+                            </div>
+                        </div>
+                        <div id="jsonp" class="box">
+                            <div class="c-hd">
+                                <p class="title">JSONP请求</p>
+                                <p class="subtitle">ajax.jsonp(url,data,config)</p>
+                            </div>
+                            <div class="c-bd">
+<widget-code language="javascript">ajax.jsonp('https://outside.com/api/getInfo/').then(function(json){
+    // 回调处理
+});</widget-code>
+                            </div>
+                        </div>
+                        <div id="createEventSource" class="box">
+                            <div class="c-hd">
+                                <p class="title">SSE连接</p>
+                                <p class="subtitle">ajax.createEventSource(url,data,config)</p>
+                            </div>
+                            <div class="c-bd">
+<widget-code language="javascript">// 创建SSE连接
+const sse = await ajax.createEventSource('https://outside.com/api/getInfo/');
+sse.on('message',function(){
+    // 消息处理
+});</widget-code>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-		</div>
-		<script type="text/javascript" src="https://passer-by.com/public/script/projects.js"></script>
-		<script>
-			var _hmt = _hmt || [];
-			(function() {
-			  var hm = document.createElement("script");
-			  hm.src = "https://hm.baidu.com/hm.js?134d31aed1aec463afbaa9e0bec45001";
-			  var s = document.getElementsByTagName("script")[0];
-			  s.parentNode.insertBefore(hm, s);
-			})();
-		</script>
-	</body>
-<html>
+            <div class="mod-copy">
+                <div class="inner">
+                    <div class="hd"><span>算法开源</span></div>
+                    <div class="bd">
+                        <p><span>算法基于「<a href="https://github.com/mumuy/ajax/blob/master/LICENSE" rel="nofollow"
+                                    target="_blank">MIT许可协议</a>」开源，除需在源码中保留版权信息和许可声明外，你有权利使用、复制、修改、合并、出版发行、散布、再授权及贩售软件及软件的副本。</span>数据持续更新中，如发现错漏或有想法建议可在此</span>
+                            <a class="text-red" href="https://github.com/mumuy/ajax/issues" rel="nofollow"
+                                target="_blank">反馈问题</a>。
+                        </p>
+                        <div class="buttons">
+                            <a class="github-button" href="https://github.com/mumuy"
+                                data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large"
+                                aria-label="Follow @mumuy on GitHub">Follow @mumuy</a>
+                            <a class="github-button" href="https://github.com/mumuy/ajax/fork"
+                                data-color-scheme="no-preference: light; light: light; dark: dark;"
+                                data-icon="octicon-repo-forked" data-size="large" data-show-count="true"
+                                aria-label="Fork mumuy/ajax on GitHub">Fork</a>
+                            <a class="github-button" href="https://github.com/mumuy/ajax"
+                                data-color-scheme="no-preference: light; light: light; dark: dark;"
+                                data-icon="octicon-star" data-size="large" data-show-count="true"
+                                aria-label="Star mumuy/ajax on GitHub">Star</a>
+                            <a class="github-button" href="https://github.com/mumuy/ajax/archive/HEAD.zip"
+                                data-icon="octicon-download" data-size="large"
+                                aria-label="Download mumuy/ajax on GitHub">Download</a>
+                        </div>
+                        <br>
+                            <p>响应式数据本地储存脚本：</p>
+                            <code><a href="https://passer-by.com/ajax/dist/ajax.min.js" target="_blank" rel="nofollow">https://passer-by.com/ajax/dist/ajax.min.js</a></code>
+                    </div>
+                </div>
+            </div>
+            <script type="text/javascript" src="https://passer-by.com/public/script/projects.js"></script>
+            <div class="mod-foot">
+                <div class="inner">
+                    <div class="bd">
+                        <p>Copyright &copy; <a href="http://passer-by.com">passer-by.com</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="mod-fixedbar">
+                <div class="bd">
+                    <a href="javascript:;"><img src="static/image/gotop.png" width="24" height="24"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://passer-by.com/widget-code/dist/widget-code.min.js?v=202401042300"></script>
+    <script type="text/javascript" src="https://jquerywidget.com/public/script/jquery.min.js"></script>
+    <script type="text/javascript" src="https://jquerywidget.com/code/jquery.headroom.js"></script>
+    <script type="text/javascript">
+        $('.mod-menu').headroom({ autoHide: false, scrollOffset: 10, background: 'transparent', autoFixed: false });
+        // 底部滚动
+        (function () {
+            let timer = null;
+            let $gotop = document.querySelector('.mod-fixedbar a');
+            $gotop.addEventListener('click', function () {
+                cancelAnimationFrame(timer);
+                let scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+                let move = scrollTop / 18;
+                timer = requestAnimationFrame(function fn() {
+                    var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+                    if (oTop > 0) {
+                        document.body.scrollTop = document.documentElement.scrollTop = oTop - move;
+                        timer = requestAnimationFrame(fn);
+                    } else {
+                        cancelAnimationFrame(timer);
+                    }
+                });
+            });
+        })();
+    </script>
+    <script async defer src="https://cdn.bootcdn.net/ajax/libs/github-buttons/2.21.1/buttons.min.js"></script>
+    <script type="text/javascript" src="https://passer-by.com/public/script/stat.js"></script>
+</body>
+</html>

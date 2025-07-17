@@ -4,6 +4,7 @@ export default {
     url:'',                                     // 请求地址
     data:{},                                    // 请求参数
     headers:{},                                 // 请求头设置
+    withCredentials:false,                      // 是否携带凭证
     crossDomain:false,                          // 是否跨域
     cache:true,                                 // 是否设置缓存
     timeout:5000,                               // 超时时间

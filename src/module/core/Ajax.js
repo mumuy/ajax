@@ -52,6 +52,16 @@ class Ajax {
         }
         return promise;
     }
+    // JSONP
+    async jsonp(url, data, config){
+        return this.request({
+            method:'GET',
+            url,
+            data,
+            ...config,
+            responseType:'jsonp'
+        });
+    }
     // SSE
     async createEventSource(url,requestConfig){
         const controller = new AbortController()
@@ -74,7 +84,7 @@ class Ajax {
 }
 
 // 快捷方法封装
-['get', 'post','head', 'options'].forEach(function(method){
+['get', 'post', 'push', 'patch'].forEach(function(method){
     Ajax.prototype[method] = function(url, data, config) {
         return this.request({
             method,
