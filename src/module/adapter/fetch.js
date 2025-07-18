@@ -10,7 +10,7 @@ export default async function(config){
         cache:config.cache?'default':'no-store',
         mode:config.crossDomain?'cors':'no-cors'
     };
-    if(options.withCredentials){
+    if(config.withCredentials){
         params.credentials = config.crossDomain?'include':'same-origin';
     }
     if(config.method=='GET'){
