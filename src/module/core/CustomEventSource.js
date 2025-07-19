@@ -1,20 +1,38 @@
-export default class ParseEventStream {
-    constructor(data,param) {
-        this.listeners = new Map();
-        this._parseEventStream(data);
-        this.isClose = false;
-        this.controller = param.controller
+export default class CustomEventSource {
+    static CONNECTING = 0;
+    static OPEN = 1;
+    static CLOSED = 2;
+    #listeners = new Map();
+    #controller = null;
+    constructor(createRequest,config) {
+        const _ = this;
+        _.url = config.url;
+        _.withCredentials = config.withCredentials||false;
+        _.readyState = CustomEventSource.CONNECTING;
+        _.onopen = function(){};
+        _.onmessage = function(){};
+        _.onerror = function(){};
+        _.#controller = config.controller;
+        createRequest().then(function(data){
+            console.log('[readyState]',_.readyState);
+            _.#parseEventStream(data);
+        });
     }
     // 解析SSE流数据
-    async _parseEventStream(body) {
+    async #parseEventStream(body) {
         const reader = body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
         const _ = this;
         try {
             while (true) {
+                this.readyState = CustomEventSource.OPEN;
                 const { done, value } = await reader.read();
-                if (done&&_.isClose) {
+                if (done) {
+                    this.readyState = CustomEventSource.CONNECTING;
+                    _.dispatchEvent({type:'error',msg:''});
+                }
+                if (this.readyState === CustomEventSource.CLOSED){
                     break;
                 }
                 const chunk = decoder.decode(value, { stream: true });
@@ -27,7 +45,7 @@ export default class ParseEventStream {
                         const event = { type: 'message', data: '', id: null, retry: null };
                         const lines = eventStr.split('\n');
                         lines.forEach(line => {
-                           if (!line.trim() || line.startsWith(':')) return;
+                        if (!line.trim() || line.startsWith(':')) return;
                             const [key, ...valueParts] = line.split(':');
                             const value = valueParts.join(':').trimStart();
                             switch (key) {
@@ -47,7 +65,7 @@ export default class ParseEventStream {
                         });
                         if (event.data) {
                             event.data = event.data.replace(/\n$/, '');  // 移除最后一个换行符
-                            _.emit(event);
+                            _.dispatchEvent(event);
                         }
                     }
                 });
@@ -57,40 +75,42 @@ export default class ParseEventStream {
         }
     }
     // 分发事件到对应的回调
-    emit(event) {
-        try {
-            if (this.listeners.has(event.type)&&!this.isClose) {
-                this.listeners.get(event.type).forEach(listener => {
-                    listener(event);
-                });
-            }
-        } catch (error) {
-            console.error('事件处理出错:', error);
+    dispatchEvent(event) {
+        if (this.#listeners.has(event.type)&&this.readyState !== CustomEventSource.CLOSED) {
+            this.#listeners.get(event.type).forEach(listener => {
+                listener(event);
+            });
+        }
+        if(this['on'+event.type]){
+            this['on'+event.type](event);
         }
     }
     // 添加事件监听器
-    on(eventType, callback) {
-        if (!this.listeners.has(eventType)) {
-            this.listeners.set(eventType, []);
+    addEventListener(eventType, callback) {
+        if (!this.#listeners.has(eventType)) {
+            this.#listeners.set(eventType, []);
         }
-        this.listeners.get(eventType).push(callback);
+        this.#listeners.get(eventType).push(callback);
         return this;
     }
     // 移除事件监听器
-    off(eventType, callback) {
-        if (this.listeners.has(eventType)) {
-            this.listeners.set(
+    removeEventListener(eventType, callback) {
+        if (this.#listeners.has(eventType)) {
+            this.#listeners.set(
                 eventType,
-                this.listeners.get(eventType).filter(listener => listener !== callback)
+                this.#listeners.get(eventType).filter(listener => listener !== callback)
             );
         }
         return this;
     }
     close(){
-        if(this.controller){
-            this.controller.abort();
+        if(this.readyState === CustomEventSource.CLOSED){
+            return;
         }
-        this.isClose = true;
-        this.emit('close');
-    };
+        this.readyState = CustomEventSource.CLOSED;
+        if(this.#controller){
+            this.#controller.abort();
+        }
+        this.dispatchEvent({ type: 'error', error: new Error('Connection closed') });
+    }
 }

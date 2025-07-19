@@ -3,7 +3,7 @@
 import defaultConfig from './config.js';
 import Interceptor from './interceptor.js';
 import doRequest from './doRequest.js';
-import ParseEventStream from './ParseEventStream.js';
+import CustomEventSource from './CustomEventSource.js';
 
 class Ajax {
     constructor(instanceConfig = {}){
@@ -62,10 +62,11 @@ class Ajax {
             responseType:'jsonp'
         });
     }
-    // SSE
-    async createEventSource(url,requestConfig){
-        const controller = new AbortController()
-        const config = Object.assign({},this.defaults,requestConfig,{
+    createEventSource(url,requestConfig){
+        const _ = this;
+        const controller = new AbortController();
+        const config = Object.assign({},_.defaults,requestConfig,{
+            url,
             method:'GET',
             headers: {
                 'Accept': 'text/event-stream'
@@ -73,11 +74,10 @@ class Ajax {
             responseType:'stream',
             signal:controller.signal
         });
-        const data = await this.request({
+        return new CustomEventSource(function(){
+            return _.request(config);
+        },{
             ...config,
-            url,
-        });
-        return new ParseEventStream(data,{
             controller
         });
     }
