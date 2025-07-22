@@ -14,7 +14,6 @@ export default class CustomEventSource {
         _.onerror = function(){};
         _.#controller = config.controller;
         createRequest().then(function(data){
-            console.log('[readyState]',_.readyState);
             _.#parseEventStream(data);
         });
     }

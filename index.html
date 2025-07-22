@@ -424,8 +424,8 @@ ajax.request({
                             </div>
                             <div class="c-bd">
 <widget-code language="javascript">// 创建SSE连接
-const sse = await ajax.createEventSource('https://outside.com/api/getInfo/');
-sse.on('message',function(){
+const sse = ajax.createEventSource('https://outside.com/api/getInfo/');
+sse.addEventListener('message',function(){
     // 消息处理
 });</widget-code>
                             </div>
