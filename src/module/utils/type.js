@@ -40,3 +40,11 @@ export function isArrayBufferView(value) {
         value instanceof DataView
     );
 }
+
+export function isURLSearchParams(value){
+    return value instanceof URLSearchParams;
+}
+
+export function isXML(value){
+    return (typeof value === 'string' && /^<([a-z]+)([^<]+)*(?:>(.*)<\/\1>|\s+\/>)$/i.test(value));
+}

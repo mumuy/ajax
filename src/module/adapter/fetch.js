@@ -34,6 +34,10 @@ export default async function(config){
             return response.json();
         }else if(config.responseType=='text'&&response.text){
             return response.text();
+        }else if(config.responseType=='xml'&&response.text){
+            const text = response.text();
+            const parser = new DOMParser();
+            return parser.parseFromString(text, "application/xml");
         }else{
             return response.blob();
         }
