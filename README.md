@@ -21,6 +21,11 @@ ajax({
     </tr>
 </thead>
 <tbody>
+	<tr>
+	<td>baseURL</td>
+	<td>location.origin</td>
+	<td>基础域</td>
+    </tr>
     <tr>
 	<td>method</td>
 	<td>'GET'</td>
@@ -37,14 +42,14 @@ ajax({
 	<td>请求参数</td>
     </tr>
     <tr>
-	<td>dataType</td>
-	<td>'json'</td>
-	<td>响应数据格式</td>
-    </tr>
-    <tr>
 	<td>headers</td>
 	<td>{}</td>
 	<td>请求头设置</td>
+    </tr>
+	<tr>
+	<td>withCredentials</td>
+	<td>false</td>
+	<td>是否携带凭证</td>
     </tr>
     <tr>
 	<td>crossDomain</td>
@@ -70,6 +75,16 @@ ajax({
 	<td>jsonpCallback</td>
 	<td>jsonp_20240823</td>
 	<td>jsonp回调函数名称</td>
+    </tr>
+	<tr>
+	<td>responseType</td>
+	<td>'json'</td>
+	<td>响应数据格式</td>
+    </tr>
+	<tr>
+	<td>dataFormatter</td>
+	<td>null</td>
+	<td>数据格式化处理</td>
     </tr>
     <tr>
 	<td>onTimeout</td>
