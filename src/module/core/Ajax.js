@@ -1,6 +1,7 @@
 
 // 拦截器
 import defaultConfig from './config.js';
+import { isString } from '../utils/type.js';
 import Interceptor from './interceptor.js';
 import doRequest from './doRequest.js';
 import CustomEventSource from './CustomEventSource.js';
@@ -18,7 +19,7 @@ class Ajax {
     async request(requestConfig,otherConfig){
         const config = {};
         // 参数规范化
-        if(typeof requestConfig == 'string'){
+        if(isString(requestConfig)){
             Object.assign(config,this.defaults,{
                 url:requestConfig
             },otherConfig);

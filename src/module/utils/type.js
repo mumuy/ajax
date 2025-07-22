@@ -14,6 +14,10 @@ export function isArray(value){
     return Array.isArray(value);
 }
 
+export function isElement(value){
+    return value instanceof Element;
+}
+
 export function isFormData(value){
     return value instanceof FormData;
 }

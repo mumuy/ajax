@@ -1,9 +1,10 @@
-import {toQueryString} from "../utils/formatter.js";
+import { isFormData } from '../utils/type.js';
+import { toQueryString } from "../utils/formatter.js";
 
 export default async function(config){
     return new Promise(function(resolve, reject){
         let xhr = new XMLHttpRequest();
-        if(typeof config.data =='object'&&config.data instanceof FormData){
+        if(isFormData(config.data)){
             config.method = 'POST';
         }
         for(let name in config.headers){

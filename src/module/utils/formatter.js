@@ -1,3 +1,5 @@
+import { isObject, isArray, isString, isElement } from '../utils/type.js';
+
 // 默认搜索参数转换
 export function toQueryString(param,patch = {}){
     let data = Object.assign({},param,patch);
@@ -9,10 +11,10 @@ export function toBracketsQueryString(obj, parentKey = ''){
     const parts = [];
     for (const [key, value] of Object.entries(obj)) {
         const fullKey = parentKey ? ` ${parentKey}[${key}]`:key ;
-        if (value instanceof Object && !Array.isArray(value)) {
+        if (isObject(value)) {
             // 递归处理嵌套对象
             parts.push(toBracketsQueryString(value, fullKey));
-        } else if (Array.isArray(value)) {
+        } else if (isArray(value)) {
             // 处理数组
             value.forEach((item, index) => {
                 if (item instanceof Object) {
@@ -27,4 +29,14 @@ export function toBracketsQueryString(obj, parentKey = ''){
         }
     }
     return parts.join('&');
+}
+
+export function toXML(value){
+    if (isString(value)) {
+        return new DOMParser().parseFromString(value, 'application/xml');
+    } else if (isElement(value)) {
+        return value;
+    } else {
+        return null;
+    }
 }

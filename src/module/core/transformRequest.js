@@ -1,5 +1,5 @@
-import { isFormData, isObject, isArrayBufferView, isURLSearchParams, isXML} from '../utils/type.js';
-import { toQueryString, toBracketsQueryString } from '../utils/formatter.js';
+import { isFormData, isObject, isArrayBufferView, isURLSearchParams, isXML, isString} from '../utils/type.js';
+import { toQueryString, toBracketsQueryString, toXML } from '../utils/formatter.js';
 
 export default function(data, headers, dataFormatter){
     if(!headers['Content-Type']){
@@ -26,10 +26,12 @@ export default function(data, headers, dataFormatter){
             return dataFormatter(data, headers);
         }
     }
-    if(headers['Content-Type'].includes('application/json')){
+    if(headers['Content-Type'].includes('application/json')&&isObject(data)){
         return JSON.stringify(config.data);
-    }else if(headers['Content-Type'].includes('application/x-www-form-urlencoded')){
+    }else if(headers['Content-Type'].includes('application/x-www-form-urlencoded')&&isObject(data)){
         return toQueryString(data);
+    }else if(headers['Content-Type'].includes('application/xml')&&isString(data)){
+        return toXML(data);
     }
     return data;
 }

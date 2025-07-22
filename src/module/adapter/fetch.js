@@ -1,5 +1,5 @@
 import transformRequest from "../core/transformRequest.js";
-import {toQueryString} from "../utils/formatter.js";
+import { toQueryString, toXML } from "../utils/formatter.js";
 
 export default async function(config){
     let url = config.url;
@@ -36,8 +36,7 @@ export default async function(config){
             return response.text();
         }else if(config.responseType=='xml'&&response.text){
             const text = response.text();
-            const parser = new DOMParser();
-            return parser.parseFromString(text, "application/xml");
+            return toXML(text);
         }else{
             return response.blob();
         }
