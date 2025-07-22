@@ -14,14 +14,6 @@ export function isArray(value){
     return Array.isArray(value);
 }
 
-export function isFunction(value){
-    return (typeof value=='function');
-}
-
-export function isDate(value){
-    return (value instanceof Date);
-}
-
 export function isFormData(value){
     return value instanceof FormData;
 }
