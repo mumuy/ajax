@@ -7,6 +7,7 @@ export default async function(config){
         let $head = document.getElementsByTagName('head')[0];
         let $script = document.createElement('script');
         $head.appendChild($script);
+        $script.setAttribute('referrerPolicy','no-referrer');
         if(config.responseType=='jsonp'){
             globalThis[config.jsonpCallback] = function (json) {
                 $head.removeChild($script);
