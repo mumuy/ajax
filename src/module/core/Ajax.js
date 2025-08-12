@@ -17,6 +17,7 @@ class Ajax {
     }
     // 通用请求方法
     async request(requestConfig,otherConfig){
+        const _ = this;
         const config = {};
         // 参数规范化
         if(isString(requestConfig)){
@@ -45,6 +46,17 @@ class Ajax {
         const taskChain = [doRequest.bind(this),undefined];
         taskChain.unshift(...requestInterceptorChain); 
         taskChain.push(...responseInterceptorChain);
+        taskChain.push(...[
+            response=>response,
+            function(error){
+                if(config&&config.retryCount>0){
+                    config.retryCount--;
+                    return _.request(config);
+                }else{
+                    return Promise.reject(error);
+                }
+            }
+        ]);
         let i = 0;
         let len = taskChain.length;
         let promise = Promise.resolve(config);

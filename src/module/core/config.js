@@ -12,5 +12,6 @@ export default {
     jsonpCallback: 'jsonp_' + Date.now(),       // jsonp回调函数名称
     responseType:'json',                        // 响应数据格式
     dataFormatter:null,                         // 数据格式化处理
+    retryCount:3,                               // 重试次数
     onTimeout:function(){},                     // 超时处理
 }
