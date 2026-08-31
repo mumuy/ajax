@@ -2,7 +2,7 @@
 // 拦截器
 import defaultConfig from './config.js';
 import { isString } from '../utils/type.js';
-import Interceptor from './interceptor.js';
+import Interceptor from './Interceptor.js';
 import doRequest from './doRequest.js';
 import CustomEventSource from './CustomEventSource.js';
 
