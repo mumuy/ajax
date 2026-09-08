@@ -6,7 +6,7 @@ export default {
     headers:{},                                 // 请求头设置
     withCredentials:false,                      // 是否携带凭证
     crossDomain:false,                          // 是否跨域
-    cache:false,                                // 是否设置缓存
+    cache:false,                                // 是否使用缓存
     timeout:5000,                               // 超时时间
     jsonp:'callback',                           // jsonp回调函数引用
     jsonpCallback: 'jsonp_' + Date.now(),       // jsonp回调函数名称

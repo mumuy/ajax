@@ -8,7 +8,6 @@ export default async function(config){
         if(isFormData(config.data)){
             config.method = 'POST';
         }
-        xhr.crossDomain = config.crossDomain;
         xhr.withCredentials = config.withCredentials;
         if(['arraybuffer','blob','document'].includes(config.responseType)){
             xhr.responseType = config.responseType;
@@ -53,6 +52,10 @@ export default async function(config){
                 if(xhr.status>=200 && xhr.status<300||xhr.status == 304) {
                     let data = config.responseType == "xml" ? xhr.responseXML : (xhr.responseType ? xhr.response : xhr.responseText);
                     if (config.responseType == "json") {
+                        if(xhr.status == 204){
+                            resolve(null);
+                            return;
+                        }
                         try{
                             data = JSON.parse(data);
                         }catch(error){
