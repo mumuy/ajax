@@ -20,7 +20,7 @@ export default class Interceptor {
     }
     forEach(action){
         this.handlers.forEach(function(params){
-            action(params);
+            params&&action(params);
         });
     }
 }

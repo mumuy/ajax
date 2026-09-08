@@ -31,10 +31,10 @@ export default async function(config){
             xhr.send(null);
         }else{
             xhr.open(config.method, config.url, true);
+            const data = transformRequest(config.data, config.headers, config.dataFormatter);
             for(let name in config.headers){
                 xhr.setRequestHeader(name,config.headers[name]);
             }
-            const data = transformRequest(config.data, config.headers, config.dataFormatter);
             xhr.send(data);
         }
         // 超时处理

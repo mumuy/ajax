@@ -18,7 +18,7 @@ export default async function(config){
         credentials:'omit',
         headers:config.headers,
         cache:config.cache?'default':'no-store',
-        mode:config.crossDomain?'cors':'same‑origin',
+        mode:config.crossDomain?'cors':'same-origin',
         signal: controller.signal
     };
     if(config.withCredentials){
