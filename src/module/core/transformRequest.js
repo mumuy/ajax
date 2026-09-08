@@ -27,7 +27,7 @@ export default function(data, headers, dataFormatter){
         }
     }
     if(headers['Content-Type'].includes('application/json')&&isObject(data)){
-        return JSON.stringify(config.data);
+        return JSON.stringify(data);
     }else if(headers['Content-Type'].includes('application/x-www-form-urlencoded')&&isObject(data)){
         return toQueryString(data);
     }else if(headers['Content-Type'].includes('application/xml')&&isString(data)){

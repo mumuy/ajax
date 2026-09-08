@@ -1,3 +1,4 @@
+import transformRequest from "../core/transformRequest.js";
 import { isFormData } from '../utils/type.js';
 import { toQueryString } from "../utils/formatter.js";
 
@@ -7,15 +8,15 @@ export default async function(config){
         if(isFormData(config.data)){
             config.method = 'POST';
         }
-        for(let name in config.headers){
-            xhr.setRequestHeader(name,config.headers[name]);
-        }
         xhr.crossDomain = config.crossDomain;
         xhr.withCredentials = config.withCredentials;
+        if(['arraybuffer','blob','document'].includes(config.responseType)){
+            xhr.responseType = config.responseType;
+        }
         // 发送请求
         if (config.method == 'GET') {
             let patch = {};
-            if(config.cache){
+            if(!config.cache){
                 patch['v'] = '_'+Date.now();
             }
             let url = config.url;
@@ -24,11 +25,16 @@ export default async function(config){
                 url += (url.includes('?')?'&':'?')+queryString;
             }
             xhr.open(config.method, url, true);
+            for(let name in config.headers){
+                xhr.setRequestHeader(name,config.headers[name]);
+            }
             xhr.send(null);
         }else{
             xhr.open(config.method, config.url, true);
+            for(let name in config.headers){
+                xhr.setRequestHeader(name,config.headers[name]);
+            }
             const data = transformRequest(config.data, config.headers, config.dataFormatter);
-            xhr.setRequestHeader('Content-Type', config.headers['Content-Type']);
             xhr.send(data);
         }
         // 超时处理
@@ -45,13 +51,20 @@ export default async function(config){
         xhr.addEventListener('loadend',() => {
             if(!requestDone){
                 if(xhr.status>=200 && xhr.status<300||xhr.status == 304) {
-                    let data = config.responseType == "xml" ? xhr.responseXML : xhr.responseText;
+                    let data = config.responseType == "xml" ? xhr.responseXML : (xhr.responseType ? xhr.response : xhr.responseText);
                     if (config.responseType == "json") {
-                        data =  JSON.parse(data);
+                        try{
+                            data = JSON.parse(data);
+                        }catch(error){
+                            reject(error);
+                            return;
+                        }
                     }
                     resolve(data);
                 } else {
-                    reject(new Error(xhr.response));
+                    const error = new Error(xhr.response || ('HTTP '+xhr.status));
+                    error.status = xhr.status;
+                    reject(error);
                 }
                 hander && clearTimeout(hander);
             }

@@ -6,6 +6,18 @@ import Interceptor from './Interceptor.js';
 import doRequest from './doRequest.js';
 import CustomEventSource from './CustomEventSource.js';
 
+
+// 判断错误是否值得重试（4xx 等业务错误不重试，网络错误/超时/5xx 重试）
+function shouldRetry(error){
+    if(!error){
+        return false;
+    }
+    if(error.status){
+        return error.status >= 500 || error.status === 0;
+    }
+    return true;
+}
+
 class Ajax {
     constructor(instanceConfig = {}){
         // 实例默认配置
@@ -27,7 +39,7 @@ class Ajax {
         }else{
             Object.assign(config,this.defaults,requestConfig);
         }
-        if(!config.url.startsWith('http')){
+        if(!/^https?:\/\//i.test(config.url) && config.url.indexOf('//') !== 0){
             config.url = config.baseURL + config.url;
         }
         config.method = config.method.toUpperCase();
@@ -49,9 +61,16 @@ class Ajax {
         taskChain.push(...[
             response=>response,
             function(error){
-                if(config&&config.retryCount>0){
+                if(config&&config.retryCount>0&&shouldRetry(error)){
                     config.retryCount--;
-                    return _.request(config);
+                    const retried = (config._retryIndex||0)+1;
+                    config._retryIndex = retried;
+                    const delay = Math.min(config.retryDelay*Math.pow(2,retried-1),8000);   // 指数退避
+                    return new Promise(function(resolve){
+                        setTimeout(function(){
+                            resolve(_.request(config));
+                        },delay);
+                    });
                 }else{
                     return Promise.reject(error);
                 }
@@ -97,7 +116,7 @@ class Ajax {
 }
 
 // 快捷方法封装
-['get', 'post', 'push', 'patch'].forEach(function(method){
+['get', 'post', 'put', 'patch'].forEach(function(method){
     Ajax.prototype[method] = function(url, data, config) {
         return this.request({
             method,

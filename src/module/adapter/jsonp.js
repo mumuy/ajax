@@ -8,39 +8,41 @@ export default async function(config){
         let $script = document.createElement('script');
         $head.appendChild($script);
         $script.setAttribute('referrerPolicy','no-referrer');
-        if(config.responseType=='jsonp'){
-            globalThis[config.jsonpCallback] = function (json) {
+        let hander = null;
+        function cleanup(){
+            if($script.parentNode){
                 $head.removeChild($script);
-                delete globalThis[config.jsonpCallback];
-                hander && clearTimeout(hander);
-                resolve(json);
-            };
-        }else{
-            $script.onload = function(){
-                hander && clearTimeout(hander);
-                resolve(json);
-            };
+            }
+            delete globalThis[config.jsonpCallback];
+            if(hander){
+                clearTimeout(hander);
+            }
         }
+        // 回调处理
+        globalThis[config.jsonpCallback] = function (json) {
+            cleanup();
+            resolve(json);
+        };
+        $script.onerror = function(){
+            cleanup();
+            reject(new Error('jsonp load error'));
+        };
         // 发送请求
         let patch = {};
-        if(config.cache){
+        if(!config.cache){
             patch['v'] = '_'+Date.now();
         }
-        if(config.responseType=='jsonp'){
-            patch[config.jsonp] = config.jsonpCallback;
-        }
+        patch[config.jsonp] = config.jsonpCallback;
         let queryString = toQueryString(config.data,patch);
         if(queryString){
             config.url += (config.url.includes('?')?'&':'?')+queryString;
         }
         $script.src = config.url;
         // 超时处理
-        let hander = setTimeout(function(){
-            $head.removeChild($script);
-            delete globalThis[config.jsonpCallback];
-            hander && clearTimeout(hander);
+        hander = setTimeout(function(){
+            cleanup();
             config.onTimeout();
-            reject({'msg':'timeout'});
+            reject(new Error('timeout'));
         }, config.timeout);
     });
 }

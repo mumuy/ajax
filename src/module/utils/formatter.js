@@ -10,7 +10,7 @@ export function toQueryString(param,patch = {}){
 export function toBracketsQueryString(obj, parentKey = ''){
     const parts = [];
     for (const [key, value] of Object.entries(obj)) {
-        const fullKey = parentKey ? ` ${parentKey}[${key}]`:key ;
+        const fullKey = parentKey ? `${parentKey}[${key}]`:key ;
         if (isObject(value)) {
             // 递归处理嵌套对象
             parts.push(toBracketsQueryString(value, fullKey));

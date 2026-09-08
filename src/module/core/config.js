@@ -6,12 +6,13 @@ export default {
     headers:{},                                 // 请求头设置
     withCredentials:false,                      // 是否携带凭证
     crossDomain:false,                          // 是否跨域
-    cache:true,                                 // 是否设置缓存
+    cache:false,                                // 是否设置缓存
     timeout:5000,                               // 超时时间
     jsonp:'callback',                           // jsonp回调函数引用
     jsonpCallback: 'jsonp_' + Date.now(),       // jsonp回调函数名称
     responseType:'json',                        // 响应数据格式
     dataFormatter:null,                         // 数据格式化处理
     retryCount:3,                               // 重试次数
+    retryDelay:1000,                            // 重试基础延迟(ms)，指数退避
     onTimeout:function(){},                     // 超时处理
 }

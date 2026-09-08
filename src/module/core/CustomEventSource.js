@@ -4,6 +4,11 @@ export default class CustomEventSource {
     static CLOSED = 2;
     #listeners = new Map();
     #controller = null;
+    #createRequest = null;
+    #config = null;
+    #lastEventId = null;
+    #retryDelay = 3000;
+    #timer = null;
     constructor(createRequest,config) {
         const _ = this;
         _.url = config.url;
@@ -13,9 +18,43 @@ export default class CustomEventSource {
         _.onmessage = function(){};
         _.onerror = function(){};
         _.#controller = config.controller;
-        createRequest().then(function(data){
-            _.#parseEventStream(data);
-        });
+        _.#createRequest = createRequest;
+        _.#config = config;
+        _.#connect();
+    }
+    // 发起连接（含断线重连）
+    async #connect() {
+        const _ = this;
+        if(_.readyState === CustomEventSource.CLOSED){
+            return;
+        }
+        try{
+            // 断线重连时携带 Last-Event-ID
+            if(_.#lastEventId && _.#config.headers){
+                _.#config.headers['Last-Event-ID'] = _.#lastEventId;
+            }
+            const data = await _.#createRequest();
+            _.dispatchEvent({type:'open'});
+            await _.#parseEventStream(data);
+        }catch(error){
+            if(_.readyState === CustomEventSource.CLOSED){
+                return;
+            }
+            _.readyState = CustomEventSource.CONNECTING;
+            _.dispatchEvent({type:'error',error});
+            _.#scheduleReconnect();
+        }
+    }
+    // 按 retry 字段调度重连
+    #scheduleReconnect(){
+        const _ = this;
+        if(_.readyState === CustomEventSource.CLOSED || _.#timer){
+            return;
+        }
+        _.#timer = setTimeout(function(){
+            _.#timer = null;
+            _.#connect();
+        }, _.#retryDelay);
     }
     // 解析SSE流数据
     async #parseEventStream(body) {
@@ -30,6 +69,7 @@ export default class CustomEventSource {
                 if (done) {
                     this.readyState = CustomEventSource.CONNECTING;
                     _.dispatchEvent({type:'error',msg:''});
+                    break;
                 }
                 if (this.readyState === CustomEventSource.CLOSED){
                     break;
@@ -44,7 +84,7 @@ export default class CustomEventSource {
                         const event = { type: 'message', data: '', id: null, retry: null };
                         const lines = eventStr.split('\n');
                         lines.forEach(line => {
-                        if (!line.trim() || line.startsWith(':')) return;
+                            if (!line.trim() || line.startsWith(':')) return;
                             const [key, ...valueParts] = line.split(':');
                             const value = valueParts.join(':').trimStart();
                             switch (key) {
@@ -59,16 +99,29 @@ export default class CustomEventSource {
                                     break;
                                 case 'retry':
                                     event.retry = parseInt(value, 10); // 转换为数字
+                                    if(!isNaN(event.retry) && event.retry > 0){
+                                        _.#retryDelay = event.retry;
+                                    }
                                     break;
                             }
                         });
                         if (event.data) {
                             event.data = event.data.replace(/\n$/, '');  // 移除最后一个换行符
+                            if(event.id){
+                                _.#lastEventId = event.id;
+                            }
                             _.dispatchEvent(event);
                         }
                     }
                 });
             }
+            _.#scheduleReconnect();
+        } catch(error) {
+            if(_.readyState === CustomEventSource.CLOSED){
+                return;
+            }
+            _.dispatchEvent({ type:'error', error });
+            _.#scheduleReconnect();
         } finally {
             reader.releaseLock();
         }
@@ -107,6 +160,10 @@ export default class CustomEventSource {
             return;
         }
         this.readyState = CustomEventSource.CLOSED;
+        if(this.#timer){
+            clearTimeout(this.#timer);
+            this.#timer = null;
+        }
         if(this.#controller){
             this.#controller.abort();
         }

@@ -13,7 +13,7 @@ export default async function(config){
     }else if(typeof XMLHttpRequest != 'undefined'){
         result = await XMLHttpRequest_adapter(config);
     }else{
-        result = new Error('fail');
+        throw new Error('no available adapter');
     }
     return result;
 }
