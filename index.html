@@ -135,8 +135,8 @@
                                     </li>
                                     <li>
                                         <a href="#push">
-                                            <span class="title">PUSH请求</span>
-                                            <span class="subtitle">push()</span>
+                                            <span class="title">PUT请求</span>
+                                            <span class="subtitle">put()</span>
                                         </a>
                                     </li>
                                     <li>
@@ -291,21 +291,21 @@ ajax({
                             <div class="bd">
                                 <div class="table-outer">
                                     <h4>通过实例可以设置基础规则，统一对系列接口进行请求</h4>
-    <widget-code language="javascript">// 设置实例基础配置
-    const instance = ajax.create({
-        baseURL:'https://passer-by.com/',
-        crossDomain: true,
-        withCredentials:true,
-        headers:{
-            ticket:'XXXXXX'
-        }
-    });
+<widget-code language="javascript">// 设置实例基础配置
+const instance = ajax.create({
+    baseURL:'https://passer-by.com/',
+    crossDomain: true,
+    withCredentials:true,
+    headers:{
+        ticket:'XXXXXX'
+    }
+});
 
-    instance.get('/api/getUser/',{
-        id:123456
-    }).then(function(json){
-        // 回调处理
-    });</widget-code>
+instance.get('/api/getUser/',{
+    id:123456
+}).then(function(json){
+    // 回调处理
+});</widget-code>
                                 </div>
                             </div>
                         </section>
@@ -317,26 +317,27 @@ ajax({
                             <div class="bd">
                                 <div class="table-outer">
                                     <h4>设置请求拦截器</h4>
-    <widget-code language="javascript">const instance = ajax.create();
-    instance.interceptors.request.add(function(config){
-        return {
-            headers:{
-                ticket:'XXXXXX',
-                ...config.headers
-            },
-            ...config
-        };
-    });</widget-code>
+<widget-code language="javascript">const instance = ajax.create();
+instance.interceptors.request.add(function(config){
+    return {
+        headers:{
+            ticket:'XXXXXX',
+            ...config.headers
+        },
+        ...config
+    };
+});</widget-code>
                                 </div>
                                 <div class="table-outer">
                                     <h4>设置响应拦截器</h4>
-    <widget-code language="javascript">const instance = ajax.create();
-    instance.interceptors.response.add(function(data){
-        return {
-            timestamp: new Date(data.time).getTime(),
-            ...data
-        };
-    });</widget-code>           </div>
+<widget-code language="javascript">const instance = ajax.create();
+instance.interceptors.response.add(function(data){
+    return {
+        timestamp: new Date(data.time).getTime(),
+        ...data
+    };
+});</widget-code>           
+                                </div>
                             </div>
                         </section>
                         <section id="request" class="mod-panel">
@@ -345,15 +346,15 @@ ajax({
                                 <p class="subtitle">ajax.request(config)</p>
                             </div>
                             <div class="bd">
-    <widget-code language="javascript">// 等效于 ajax(config)
-    ajax.request({
-        url:'/api/getUser/',
-        data:{
-            id:123456
-        }
-    }).then(function(json){
-        // 回调处理
-    });</widget-code>
+<widget-code language="javascript">// 等效于 ajax(config)
+ajax.request({
+    url:'/api/getUser/',
+    data:{
+        id:123456
+    }
+}).then(function(json){
+    // 回调处理
+});</widget-code>
                             </div>
                         </section>
                         <section id="get" class="mod-panel">
@@ -362,9 +363,9 @@ ajax({
                                 <p class="subtitle">ajax.get(url,data,config)</p>
                             </div>
                             <div class="bd">
-    <widget-code language="javascript">ajax.get('/api/getNews/').then(function(json){
-        // 回调处理
-    });</widget-code>
+<widget-code language="javascript">ajax.get('/api/getNews/').then(function(json){
+    // 回调处理
+});</widget-code>
                             </div>
                         </section>
                         <section id="post" class="mod-panel">
@@ -373,24 +374,24 @@ ajax({
                                 <p class="subtitle">ajax.post(url,data,config)</p>
                             </div>
                             <div class="bd">
-    <widget-code language="javascript">ajax.post('/api/getUser/',{
-        id: '123456'
-    }).then(function(json){
-        // 回调处理
-    });</widget-code>
+<widget-code language="javascript">ajax.post('/api/getUser/',{
+    id: '123456'
+}).then(function(json){
+    // 回调处理
+});</widget-code>
                             </div>
                         </section>
                         <section id="push" class="mod-panel">
                             <div class="hd">
-                                <h3 class="title">PUSH请求</h3>
-                                <p class="subtitle">ajax.push(url,data,config)</p>
+                                <h3 class="title">PUT请求</h3>
+                                <p class="subtitle">ajax.put(url,data,config)</p>
                             </div>
                             <div class="bd">
-    <widget-code language="javascript">ajax.push('/api/updateInfo/',{
-        id: '123456'
-    }).then(function(json){
-        // 回调处理
-    });</widget-code>
+<widget-code language="javascript">ajax.put('/api/updateInfo/',{
+    id: '123456'
+}).then(function(json){
+    // 回调处理
+});</widget-code>
                             </div>
                         </section>
                         <section id="patch" class="mod-panel">
@@ -399,11 +400,11 @@ ajax({
                                 <p class="subtitle">ajax.patch(url,data,config)</p>
                             </div>
                             <div class="bd">
-    <widget-code language="javascript">ajax.patch('/api/updateInfo/',{
-        id: '123456'
-    }).then(function(json){
-        // 回调处理
-    });</widget-code>
+<widget-code language="javascript">ajax.patch('/api/updateInfo/',{
+    id: '123456'
+}).then(function(json){
+    // 回调处理
+});</widget-code>
                             </div>
                         </section>
                         <section id="delete" class="mod-panel">
@@ -412,9 +413,9 @@ ajax({
                                 <p class="subtitle">ajax.delete(url,config)</p>
                             </div>
                             <div class="bd">
-    <widget-code language="javascript">ajax.delete('/api/deleteInfo/').then(function(json){
-        // 回调处理
-    });</widget-code>
+<widget-code language="javascript">ajax.delete('/api/deleteInfo/').then(function(json){
+    // 回调处理
+});</widget-code>
                             </div>
                         </section>
                         <section id="head" class="mod-panel">
@@ -423,9 +424,9 @@ ajax({
                                 <p class="subtitle">ajax.head(url,config)</p>
                             </div>
                             <div class="bd">
-    <widget-code language="javascript">ajax.head('/api/deleteInfo/').then(function(json){
-        // 回调处理
-    });</widget-code>
+<widget-code language="javascript">ajax.head('/api/deleteInfo/').then(function(json){
+    // 回调处理
+});</widget-code>
                             </div>
                         </section>
                         <section id="options" class="mod-panel">
@@ -434,9 +435,9 @@ ajax({
                                 <p class="subtitle">ajax.options(url,config)</p>
                             </div>
                             <div class="bd">
-    <widget-code language="javascript">ajax.options('/api/deleteInfo/').then(function(json){
-        // 回调处理
-    });</widget-code>
+<widget-code language="javascript">ajax.options('/api/deleteInfo/').then(function(json){
+    // 回调处理
+});</widget-code>
                             </div>
                         </section>
                         <section id="jsonp" class="mod-panel">
@@ -445,9 +446,9 @@ ajax({
                                 <p class="subtitle">ajax.jsonp(url,data,config)</p>
                             </div>
                             <div class="bd">
-    <widget-code language="javascript">ajax.jsonp('https://outside.com/api/getInfo/').then(function(json){
-        // 回调处理
-    });</widget-code>
+<widget-code language="javascript">ajax.jsonp('https://outside.com/api/getInfo/').then(function(json){
+    // 回调处理
+});</widget-code>
                             </div>
                         </section>
                         <section id="createEventSource" class="mod-panel">
@@ -456,11 +457,11 @@ ajax({
                                 <p class="subtitle">ajax.createEventSource(url,data,config)</p>
                             </div>
                             <div class="bd">
-    <widget-code language="javascript">// 创建SSE连接
-    const sse = ajax.createEventSource('https://outside.com/api/getInfo/');
-    sse.addEventListener('message',function(){
-        // 消息处理
-    });</widget-code>
+<widget-code language="javascript">// 创建SSE连接
+const sse = ajax.createEventSource('https://outside.com/api/getInfo/');
+sse.addEventListener('message',function(){
+    // 消息处理
+});</widget-code>
                             </div>
                         </section>
                     </main>
