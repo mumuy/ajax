@@ -14,5 +14,6 @@ export default {
     dataFormatter:null,                         // 数据格式化处理
     retryCount:3,                               // 重试次数
     retryDelay:1000,                            // 重试基础延迟(ms)，指数退避
+    signal:null,                                // 支持AbortController
     onTimeout:function(){},                     // 超时处理
 }

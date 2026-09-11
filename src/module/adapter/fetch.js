@@ -3,23 +3,13 @@ import { toQueryString, toXML } from "../utils/formatter.js";
 
 export default async function(config){
     let url = config.url;
-    const controller = new AbortController();
-    if(config.signal){
-        if(config.signal.aborted){
-            controller.abort();
-        }else{
-            config.signal.addEventListener('abort', function(){
-                controller.abort();
-            }, { once:true });
-        }
-    }
     const params = {
         method:config.method,
         credentials:'omit',
         headers:config.headers,
         cache:config.cache?'default':'no-store',
         mode:config.crossDomain?'cors':'same-origin',
-        signal: controller.signal
+        signal: config.signal
     };
     if(config.withCredentials){
         params.credentials = config.crossDomain?'include':'same-origin';
@@ -35,7 +25,6 @@ export default async function(config){
     // 超时处理
     const hander = setTimeout(function() {
         config.onTimeout();
-        controller.abort();
     }, config.timeout);
     // 发起请求
     let response;
